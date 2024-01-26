@@ -1,12 +1,16 @@
 package med.voll.api.medico;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import med.voll.api.endereco.Endereco;
 import med.voll.api.medico.enums.Especialidade;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "medicos")
 @Entity
