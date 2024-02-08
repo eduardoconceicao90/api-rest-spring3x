@@ -1,7 +1,7 @@
 create table consultas(
     id bigint not null auto_increment,
-    medico_id id bigint not null,
-    paciente_id id bigint not null,
+    medico_id bigint not null,
+    paciente_id bigint not null,
     data datetime not null,
 
     primary key(id),
