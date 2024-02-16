@@ -3,9 +3,11 @@ package med.voll.api.domain.consulta.service;
 import med.voll.api.domain.ValidacaoException;
 import med.voll.api.domain.consulta.Consulta;
 import med.voll.api.domain.consulta.DadosAgendamentoConsulta;
+import med.voll.api.domain.consulta.DadosCancelamentoConsulta;
 import med.voll.api.domain.consulta.DadosDetalhamentoConsulta;
 import med.voll.api.domain.consulta.repository.ConsultaRepository;
-import med.voll.api.domain.consulta.validacoes.ValidadorAgendamentoDeConsulta;
+import med.voll.api.domain.consulta.validacoes.agendamento.ValidadorAgendamentoDeConsulta;
+import med.voll.api.domain.consulta.validacoes.cancelamento.ValidadorCancelamentoDeConsulta;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.repository.MedicoRepository;
 import med.voll.api.domain.paciente.repository.PacienteRepository;
@@ -29,6 +31,9 @@ public class AgendaDeConsultas {
     @Autowired
     private List<ValidadorAgendamentoDeConsulta> validadores;
 
+    @Autowired
+    private List<ValidadorCancelamentoDeConsulta> validadoresCancelamento;
+
     public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados){
 
         if(!pacienteRepository.existsById(dados.idPaciente())){
@@ -48,7 +53,7 @@ public class AgendaDeConsultas {
             throw new ValidacaoException("Não existe médico disponivel ness data");
         }
 
-        var consulta = new Consulta(null, medico, paciente, dados.data());
+        var consulta = new Consulta(null, medico, paciente, dados.data(), null);
 
         consultaRepository.save(consulta);
 
@@ -65,5 +70,16 @@ public class AgendaDeConsultas {
         }
 
         return medicoRepository.escolherMedicoAleatorioLivreNaData(dados.especialidade(), dados.data());
+    }
+
+    public void cancelar(DadosCancelamentoConsulta dados) {
+        if (!consultaRepository.existsById(dados.idConsulta())) {
+            throw new ValidacaoException("Id da consulta informado não existe!");
+        }
+
+        validadoresCancelamento.forEach(v -> v.validar(dados));
+
+        var consulta = consultaRepository.getReferenceById(dados.idConsulta());
+        consulta.cancelar(dados.motivo());
     }
 }
