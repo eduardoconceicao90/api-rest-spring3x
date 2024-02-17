@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-@Component
+@Component("ValidadorHorarioAntecedenciaCancelamento")
 public class ValidadorHorarioAntecedencia implements ValidadorCancelamentoDeConsulta {
 
     @Autowired
