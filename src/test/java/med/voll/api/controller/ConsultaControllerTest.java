@@ -44,7 +44,7 @@ class ConsultaControllerTest {
     @Test
     @DisplayName("Deveria devolver codigo http 400 quando informacoes estao invalidas")
     @WithMockUser
-    void agendarCenario1() throws Exception {
+    void agendar_cenario1() throws Exception {
         var response = mvc.perform(post("/consultas"))
                 .andReturn().getResponse();
 
@@ -52,13 +52,13 @@ class ConsultaControllerTest {
     }
 
     @Test
-    @DisplayName("Deveria devolver codigo http 200 quando informações estão validas")
+    @DisplayName("Deveria devolver codigo http 200 quando informacoes estao validas")
     @WithMockUser
-    void agendarCenario2() throws Exception {
+    void agendar_cenario2() throws Exception {
         var data = LocalDateTime.now().plusHours(1);
         var especialidade = Especialidade.CARDIOLOGIA;
 
-        var dadosDetalhamento = new DadosDetalhamentoConsulta(null, 1L, 2L, data);
+        var dadosDetalhamento = new DadosDetalhamentoConsulta(null, 2l, 5l, data);
         when(agendaDeConsultas.agendar(any())).thenReturn(dadosDetalhamento);
 
         var response = mvc
@@ -66,14 +66,16 @@ class ConsultaControllerTest {
                         post("/consultas")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(dadosAgendamentoConsultaJson.write(
-                                        new DadosAgendamentoConsulta(1L, 2L, data, especialidade)
+                                        new DadosAgendamentoConsulta(2l, 5l, data, especialidade)
                                 ).getJson())
                 )
                 .andReturn().getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-        var jsonEsperado = dadosDetalhamentoConsultaJson.write(dadosDetalhamento).getJson();
+        var jsonEsperado = dadosDetalhamentoConsultaJson.write(
+                dadosDetalhamento
+        ).getJson();
 
         assertThat(response.getContentAsString()).isEqualTo(jsonEsperado);
     }
